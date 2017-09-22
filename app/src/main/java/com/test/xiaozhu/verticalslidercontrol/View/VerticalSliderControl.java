@@ -17,9 +17,13 @@ import com.test.xiaozhu.verticalslidercontrol.R;
  */
 public class VerticalSliderControl extends FrameLayout {
     /**
+     * 最大值
+     */
+    private int maxProgress = 100;
+    /**
      * 当前的进度
      */
-    private int progress = 50;
+    private int progress = maxProgress/2;
     /**
      * 当前控件的高度，单位是dp
      */
@@ -48,6 +52,7 @@ public class VerticalSliderControl extends FrameLayout {
      * 动画控件的父控件
      */
     private FrameLayout fl_slider;
+
 
     public VerticalSliderControl(Context context) {
         super(context);
@@ -83,16 +88,16 @@ public class VerticalSliderControl extends FrameLayout {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-                if (event.getY() < fl_slider.getTop()) {
-                    currentY = 0;
-                    updateProgressByCurrentX();
-                }else if (event.getY() > fl_slider.getBottom()) {
-                    currentY = view_outer.getMeasuredHeight();
-                    updateProgressByCurrentX();
-                }else {
-                    event.setLocation(event.getX(),event.getY()-fl_slider.getTop());
-                    sliderView.dispatchTouchEvent(event);
-                }
+        if (event.getY() < fl_slider.getTop()) {
+            currentY = 0;
+            updateProgressByCurrentX();
+        } else if (event.getY() > fl_slider.getBottom()) {
+            currentY = view_outer.getMeasuredHeight();
+            updateProgressByCurrentX();
+        } else {
+            event.setLocation(event.getX(), event.getY() - fl_slider.getTop());
+            sliderView.dispatchTouchEvent(event);
+        }
 
 
         return true;
@@ -133,8 +138,8 @@ public class VerticalSliderControl extends FrameLayout {
 
                         break;
                     case MotionEvent.ACTION_CANCEL:
-                        event.setLocation(event.getX(),event.getY()+fl_slider.getTop());
-                        onTouch((View) v.getParent(),event);
+                        event.setLocation(event.getX(), event.getY() + fl_slider.getTop());
+                        onTouch((View) v.getParent(), event);
 //                        currentY = (int) event.getY();
 //                        if (currentY>getPxByProgress(50)){
 //                            currentY=getPxByProgress(0);
@@ -162,9 +167,9 @@ public class VerticalSliderControl extends FrameLayout {
      * @param progress
      */
     public void setProgress(int progress) {
-        Log.i("公子无双","setProgress"+progress);
+        Log.i("公子无双", "setProgress" + progress);
         this.progress = progress;
-        currentY = getPxByProgress(100 - progress);
+        currentY = getPxByProgress(100 - progress*100/maxProgress);
         updateProgressByCurrentX();
     }
 
@@ -172,7 +177,7 @@ public class VerticalSliderControl extends FrameLayout {
      * 更新图片的高度和当前的进度
      */
     private void updateProgressByTouch() {
-        progress = (getPxByProgress(100) - currentY) * 100 / getPxByProgress(100);
+        progress = (getPxByProgress(100) - currentY) * maxProgress / getPxByProgress(100);
         updateProgressByCurrentX();
     }
 
@@ -267,5 +272,18 @@ public class VerticalSliderControl extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         setProgress(progress);
+    }
+
+    /**
+     * 设置最大值属性
+     *
+     * @param maxProgress
+     */
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
+    public int getMaxProgress() {
+        return maxProgress;
     }
 }
